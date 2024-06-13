@@ -9,7 +9,7 @@
     <div id="result" style="border:solid black 3px"></div>
     <script>
         fetch("http://localhost:3001")
-            .then(response => response.json())
+            .then(response => response.text())
             .then(data => {
                 // Assuming data is an object or an array
                 console.log(data);
