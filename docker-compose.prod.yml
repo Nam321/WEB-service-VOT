@@ -1,0 +1,82 @@
+version: "3"
+services:
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:80"
+    networks:
+      - webnet
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "3001:3001"
+    depends_on:
+      - mariadb1
+      - mariadb2
+    networks:
+      - webnet
+      - mariadb
+
+  mariadb1:
+    image: mariadb:10.5
+    container_name: mariadb1
+    ports:
+      - "3306:3306"
+    env_file: .env
+    environment:
+      - MARIADB_USER=${MARIADB_USER_1}
+      - MARIADB_PASSWORD=${MARIADB_PASSWORD_1}
+      - MARIADB_DATABASE=${MARIADB_DATABASE_1}
+      - MARIADB_ROOT_PASSWORD=${MARIADB_ROOT_PASSWORD}
+    volumes:
+      - ./mariadb1:/var/lib/mysql
+    networks:
+      - mariadb
+
+  mariadb2:
+    image: mariadb:10.5
+    container_name: mariadb2
+    ports:
+      - "3307:3306"
+    env_file: .env
+    environment:
+      - MARIADB_USER=${MARIADB_USER_2}
+      - MARIADB_PASSWORD=${MARIADB_PASSWORD_2}
+      - MARIADB_DATABASE=${MARIADB_DATABASE_2}
+      - MARIADB_ROOT_PASSWORD=${MARIADB_ROOT_PASSWORD}
+    volumes:
+      - ./mariadb2:/var/lib/mysql
+    networks:
+      - mariadb
+
+  proxysql:
+    image: proxysql/proxysql:latest
+    container_name: proxysql
+    ports:
+      - "6032:6032"
+      - "6070:6070"
+      - "6080:6080"
+    networks:
+      - mariadb
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:latest
+    container_name: keycloak
+    ports:
+      - "8080:8080"
+    environment:
+      - KEYCLOAK_USER=admin
+      - KEYCLOAK_PASSWORD=admin
+    volumes:
+      - ./keycloak:/opt/quay.io/keycloak/standalone/data
+    networks:
+      - webnet
+
+networks:
+  webnet:
+  mariadb:
