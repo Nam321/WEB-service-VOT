@@ -23,6 +23,7 @@ services:
     ports:
       - "8080:8080"
     env_file: C:\Users\evgen\OneDrive\Desktop\vot_domashno\WEB-service-VOT\keycloak.env
+    command: ["start-dev"]
 
   # MariaDB Master
   mariadb1:
