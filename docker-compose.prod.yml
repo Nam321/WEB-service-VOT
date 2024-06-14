@@ -72,10 +72,17 @@ services:
     environment:
       - KEYCLOAK_USER=admin
       - KEYCLOAK_PASSWORD=admin
+      - DB_VENDOR=mariadb
+      - DB_ADDR=mariadb1
+      - DB_DATABASE=${MARIADB_DATABASE_1}
+      - DB_USER=${MARIADB_USER_1}
+      - DB_PASSWORD=${MARIADB_PASSWORD_1}
     volumes:
-      - ./keycloak:/opt/quay.io/keycloak/standalone/data
+      - ./keycloak:/opt/jboss/keycloak/standalone/data
+    command: ["start-dev"]
     networks:
       - webnet
+      - mariadb
 
 networks:
   webnet:
